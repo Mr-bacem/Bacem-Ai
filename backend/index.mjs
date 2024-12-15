@@ -1,39 +1,40 @@
-const express = require("express");
-const ImageKit = require("imagekit");
-const cors = require("cors");
-const path = require("path");
-const url = require("url");
-const Chat = require('./models/chat');
-const UserChats = require('./models/userChats');
-const { default: mongoose } = require("mongoose");
-const{ ClerkExpressRequireAuth } = require('@clerk/clerk-sdk-node');
-require("dotenv").config();
+import express from "express";
+import cors from "cors";
+import path from "path";
+import url, { fileURLToPath } from "url";
+import ImageKit from "imagekit";
+import mongoose from "mongoose";
+import Chat from "./models/chat.js";
+import UserChats from "./models/userChats.js";
+import { ClerkExpressRequireAuth } from "@clerk/clerk-sdk-node";
+import dotenv from 'dotenv';
 
-const PORT = process.env.PORT || 3000; // Set a default port if PORT is not defined in .env
 
+dotenv.config(); 
+
+
+const PORT = process.env.PORT || 3000;
 const app = express();
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 app.use(
   cors({
     origin: process.env.CLIENT_URL,
     credentials: true,
   })
 );
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
+app.use(express.json());
 
-app.use(express.json())
-
-const connect = async() => {
+const connect = async () => {
   try {
-    await mongoose.connect(process.env.MONGO)
-    console.log("Connected to MongoDB")
-  }catch(err) {
-    console.log(err)
+    await mongoose.connect(process.env.MONGO);
+    console.log("Connected to MongoDB");
+  } catch (err) {
+    console.log(err);
   }
-
-}
+};
 
 const imagekit = new ImageKit({
   urlEndpoint: process.env.IMAGE_KIT_ENDPOINT,
@@ -157,6 +158,8 @@ app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(401).send("Unauthenticated!");
 });
+
+// PRODUCTION
 app.use(express.static(path.join(__dirname, "../client/dist")));
 
 app.get("*", (req, res) => {
@@ -164,6 +167,6 @@ app.get("*", (req, res) => {
 });
 
 app.listen(PORT, () => {
-  connect()
+  connect();
   console.log(`Server running on port ${PORT}`);
 });
