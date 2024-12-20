@@ -1,3 +1,4 @@
+
 import { useEffect, useRef, useState } from "react";
 import "./newPrompt.css";
 import Upload from "../upload/Upload";
@@ -16,23 +17,15 @@ const NewPrompt = ({ data }) => {
     aiData: {},
   });
 
-  const chatHistory = data?.history || [];
-if (chatHistory.length === 0 || chatHistory[0].role !== 'user') {
-  console.error("Invalid chat history");
-  return; // or handle the error appropriately
-}
-
-const chat = model.startChat({
-  history: [
-    data?.history.map(({ role, parts }) => ({
+  const chat = model.startChat({
+    history: data?.history.map(({ role, parts }) => ({
       role,
       parts: [{ text: parts[0].text }],
-    })),
-  ],
-  generationConfig: {
-    // maxOutputTokens: 100,
-  },
-});;
+    })) || [],
+    generationConfig: {},
+  });
+  
+
   const endRef = useRef(null);
   const formRef = useRef(null);
 
