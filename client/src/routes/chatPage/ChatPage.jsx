@@ -9,13 +9,23 @@ const ChatPage = () => {
   const path = useLocation().pathname;
   const chatId = path.split("/").pop();
 
-  const { isPending, error, data } = useQuery({
-    queryKey: ["chat", chatId],
-    queryFn: () =>
-      fetch(`${import.meta.env.VITE_API_URL}/api/chats/${chatId}`, {
+
+  const { isPending: e, error: t, data: n } = useQuery({
+    queryKey: ["userChats"],
+    queryFn: async () => {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/userchats`, {
+        method: "GET",
         credentials: "include",
-      }).then((res) => res.json()),
-  });
+        headers: {
+          "Authorization": `Bearer ${import.meta.env.VITE_CLERK_PUBLISHABLE_KEY}`, // Use your actual token here
+        },
+      });
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status} ${response.statusText}`);
+        }
+        return response.json();
+    }
+});
 
   console.log(data);
 

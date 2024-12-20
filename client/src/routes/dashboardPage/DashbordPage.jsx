@@ -13,7 +13,8 @@ const DashboardPage = () => {
         method: "POST",
         credentials: "include",
         headers: {
-          "Content-Type": "application/json",
+            "Authorization": `Bearer ${import.meta.env.VITE_CLERK_PUBLISHABLE_KEY}`,
+            "Content-Type": "application/json",
         },
         body: JSON.stringify({ text }),
       }).then((res) => res.json());
@@ -23,7 +24,7 @@ const DashboardPage = () => {
       queryClient.invalidateQueries({ queryKey: ["userChats"] });
       navigate(`/dashboard/chats/${id}`);
     },
-  });
+});
 
   const handleSubmit = async (e) => {
     e.preventDefault();
